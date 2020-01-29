@@ -107,35 +107,34 @@
 
     UBTT_LocateCapturePoint::UBTT_LocateCapturePoint(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
     {
-    NodeName = "Locate Capture Point";
-    bNotifyTick = true;
-    BlackboardKey.AddVectorFilter(this, GET_MEMBER_NAME_CHECKED(UBTT_LocateCapturePoint, BlackboardKey));
-
+        NodeName = "Locate Capture Point";
+        bNotifyTick = true;
+        BlackboardKey.AddVectorFilter(this, GET_MEMBER_NAME_CHECKED(UBTT_LocateCapturePoint, BlackboardKey));
     }
 
     EBTNodeResult::Type UBTT_LocateCapturePoint::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
     {
-    // Gets the enemy executing this task
-    AAIController* AIOwner = OwnerComp.GetAIOwner();
-    APawn* enemyCharacter = AIOwner->GetPawn();
-    float x = enemyCharacter->GetActorLocation().X;
+        // Gets the enemy executing this task
+        AAIController* AIOwner = OwnerComp.GetAIOwner();
+        APawn* enemyCharacter = AIOwner->GetPawn();
+        float x = enemyCharacter->GetActorLocation().X;
 
-    // Creates a TArray and fills it with the capture points on the map
-    AConquerGameMode* gameMode = Cast<AConquerGameMode>
+        // Creates a TArray and fills it with the capture points on the map
+        AConquerGameMode* gameMode = Cast&lt;AConquerGameMode&gt;
         (GetWorld()->GetAuthGameMode());
-        TArray<ACapturePoint*>
-            capturePoints = gameMode->GetCapturePoints();
+        TArray&lt;ACapturePoint*&gt;
+        capturePoints = gameMode->GetCapturePoints();
 
-            // Sets up variables used for calculating the closest capture point to the enemy
-            FVector tempVector = FVector(0, 0, 0);
-            float tempDistance = 0.0f;
-            float smallestDistance = 1000000.0f;
-            FVector closestPoint = capturePoints[0]->GetActorLocation();
-            int capturePointNum = 0;
+        // Sets up variables used for calculating the closest capture point to the enemy
+        FVector tempVector = FVector(0, 0, 0);
+        float tempDistance = 0.0f;
+        float smallestDistance = 1000000.0f;
+        FVector closestPoint = capturePoints[0]->GetActorLocation();
+        int capturePointNum = 0;
 
-            // Iterates through the 3 capture points
-            for (int i = 0; i < 3; i++)
-            {
+        // Iterates through the 3 capture points
+        for (int i = 0; i < 3; i++)
+        {
             // Gets the capture point's location
             tempVector = capturePoints[i]->GetTargetLocation();
             // Finds distance between the point and the enemy
@@ -144,30 +143,30 @@
             then make tempDistance the new smallest distance*/
             if (tempDistance <= smallestDistance && capturePoints[i]->GetEnemyCaptured() == false)
             {
-            smallestDistance = tempDistance;
-            closestPoint = tempVector;
-            capturePointNum = i;
+                smallestDistance = tempDistance;
+                closestPoint = tempVector;
+                capturePointNum = i;
             }
-            };
-            // Returns the location of the closest capture point
-            OwnerComp.GetBlackboardComponent()->SetValueAsVector(BlackboardKey.SelectedKeyName, closestPoint);
+        };
+        // Returns the location of the closest capture point
+        OwnerComp.GetBlackboardComponent()->SetValueAsVector(BlackboardKey.SelectedKeyName, closestPoint);
 
-            return EBTNodeResult::Succeeded;
-            }
+        return EBTNodeResult::Succeeded;
+    }
 
-            FString UBTT_LocateCapturePoint::GetStaticDescription() const
-            {
-            FString KeyDesc("Invalid");
-            if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Vector::StaticClass())
-            {
+    FString UBTT_LocateCapturePoint::GetStaticDescription() const
+    {
+        FString KeyDesc("Invalid");
+        if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Vector::StaticClass())
+        {
             KeyDesc = BlackboardKey.SelectedKeyName.ToString();
-            }
+        }
 
-            return FString::Printf(TEXT("%s: $S"), *Super::GetStaticDescription(), &KeyDesc);
-            }
+        return FString::Printf(TEXT("%s: $S"), *Super::GetStaticDescription(), &KeyDesc);
+    }
 
-            void UBTT_LocateCapturePoint::OnGameplayTaskActivated(UGameplayTask& Task)
-            {}
+    void UBTT_LocateCapturePoint::OnGameplayTaskActivated(UGameplayTask& Task)
+    {}
 </code>
                 </pre>
                 </div>
