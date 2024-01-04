@@ -8,7 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>First Person Shooter</title>
+    <title>Incursion</title>
 
     <!-- Font Awesome Icons -->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -20,14 +20,17 @@
     <link href="https://fonts.googleapis.com/css?family=Merriweather+Sans:400,700" rel="stylesheet">
     <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic' rel='stylesheet' type='text/css'>
     <link href="https://fonts.googleapis.com/css?family=Noto+Sans+TC&display=swap" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@1,500&display=swap" rel="stylesheet">
+
     <!-- Plugin CSS -->
     <link href="vendor/magnific-popup/magnific-popup.css" rel="stylesheet">
 
     <!-- Theme CSS - Includes Bootstrap -->
     <link href="css/creative.min.css" rel="stylesheet">
 
-    <!-- LinkedIn Profile Badge -->
-    <script type="text/javascript" src="https://platform.linkedin.com/badges/js/profile.js" async defer></script>
 
     <!-- Prism -->
     <link href="css/prism.css" rel="stylesheet" />
@@ -48,7 +51,7 @@
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ml-auto my-2 my-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link js-scroll-trigger" href="#description">LocateCapturePoint Class</a>
+                        <a class="nav-link js-scroll-trigger" href="#gameplay">Gameplay</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link js-scroll-trigger" href="#contact">Contact Information</a>
@@ -63,118 +66,49 @@
         <div class="container h-100">
             <div class="row h-100 align-items-center justify-content-center text-center">
                 <div class="col-lg-10 align-self-end">
-                    <h1 class="text-uppercase text-white font-weight-bold">First Person Shooter</h1>
+                    <h1 class="text-uppercase text-white font-weight-bold">/// Incursion C++ ///</h1>
                     <hr class="divider my-4">
                 </div>
                 <div class="col-lg-8 align-self-baseline">
                     <p class="text-white-75 font-weight-light mb-5">
-                        C++ // Unreal Engine 4 // AI
+                        Unreal Engine 5 // C++
                     </p>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- About Section -->
-    <section class="page-section bg-primary" id="description">
+    <!-- Gameplay -->
+    <section class="page-section bg-primary" id="gameplay">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-8 text-center">
-                    <h2 class="text-white mt-0">UBTT_LocateCapturePoint</h2>
+                    <h2 class="text-white mt-0">Gameplay</h2>
                     <hr class="divider light my-4">
                 </div>
             </div>
             <div class="container">
-                <div class="row">
-                    <div class="col-lg-6">
-                        <p align="center" class="text-white-50 mb-4 mt-4">
-                            The game starts with the player on one side of the map, and the enemies on the other.
-                            The player must kill enemies and control the three capture points in order to earn points.
-                            Once either team reaches the point limit, they win the game. <br>
-                            This class checks the distances between the enemy AI and the three capture points, in addition to whether or not the point has been captured.
-                            It then returns the closest point to the enemy which has not been captured.
+                <div class="col-lg-6">
+                    <div class="center">
+                        <p class="text-white-50 mb-4 mt-4 text-center ParagraphText">
+                            A mix of the tower defence genre and the first-person shooter genre where the player must defend against waves of alien enemies <br /> in order to survive.
+                            They can achieve this by purchasing towers to attack autonomously in addition to shooting the enemies themselves. <br />
+                            Incursion was made entirely using the blueprint system in Unreal Engine 5 (and uses marketplace content for assets). <br /><br />
+                            Incursion C++ is recreation of Incursion made almost entirely with C++ instead of blueprints. <br /> <br />
                         </p>
                     </div>
+                </div>
+                <div class="container">
                     <div class="col-lg-6">
                         <div class="embed-responsive embed-responsive-16by9">
-                            <iframe class="embed-responsive-item mb-4" width="560" height="315" src="https://www.youtube-nocookie.com/embed/scO3EfyIwu4" frameborder="0"
-                                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            <iframe width="560" height="315" src="https://youtu.be/npybkGqSGv8?feature=shared" title="YouTube video player" frameborder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                         </div>
                     </div>
-                </div>
-                <div class="container mt-4">
-                    <pre><code class="language-cpp">
-
-    UBTT_LocateCapturePoint::UBTT_LocateCapturePoint(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
-    {
-        NodeName = "Locate Capture Point";
-        bNotifyTick = true;
-        BlackboardKey.AddVectorFilter(this, GET_MEMBER_NAME_CHECKED(UBTT_LocateCapturePoint, BlackboardKey));
-    }
-
-    EBTNodeResult::Type UBTT_LocateCapturePoint::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
-    {
-        // Gets the enemy executing this task
-        AAIController* AIOwner = OwnerComp.GetAIOwner();
-        APawn* enemyCharacter = AIOwner->GetPawn();
-        float x = enemyCharacter->GetActorLocation().X;
-
-        // Creates a TArray and fills it with the capture points on the map
-        AConquerGameMode* gameMode = Cast&lt;AConquerGameMode&gt;
-        (GetWorld()->GetAuthGameMode());
-        TArray&lt;ACapturePoint*&gt;
-        capturePoints = gameMode->GetCapturePoints();
-
-        // Sets up variables used for calculating the closest capture point to the enemy
-        FVector tempVector = FVector(0, 0, 0);
-        float tempDistance = 0.0f;
-        float smallestDistance = 1000000.0f;
-        FVector closestPoint = capturePoints[0]->GetActorLocation();
-        int capturePointNum = 0;
-
-        // Iterates through the 3 capture points
-        for (int i = 0; i < 3; i++)
-        {
-            // Gets the capture point's location
-            tempVector = capturePoints[i]->GetTargetLocation();
-            // Finds distance between the point and the enemy
-            tempDistance = FVector::Distance(enemyCharacter->GetActorLocation(), tempVector);
-            /* If the tempDistance is less than or equal to the current smallest distance and the point has not been captured,
-            then make tempDistance the new smallest distance*/
-            if (tempDistance <= smallestDistance && capturePoints[i]->GetEnemyCaptured() == false)
-            {
-                smallestDistance = tempDistance;
-                closestPoint = tempVector;
-                capturePointNum = i;
-            }
-        };
-        // Returns the location of the closest capture point
-        OwnerComp.GetBlackboardComponent()->SetValueAsVector(BlackboardKey.SelectedKeyName, closestPoint);
-
-        return EBTNodeResult::Succeeded;
-    }
-
-    FString UBTT_LocateCapturePoint::GetStaticDescription() const
-    {
-        FString KeyDesc("Invalid");
-        if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Vector::StaticClass())
-        {
-            KeyDesc = BlackboardKey.SelectedKeyName.ToString();
-        }
-
-        return FString::Printf(TEXT("%s: $S"), *Super::GetStaticDescription(), &KeyDesc);
-    }
-
-    void UBTT_LocateCapturePoint::OnGameplayTaskActivated(UGameplayTask& Task)
-    {}
-</code>
-                </pre>
                 </div>
             </div>
         </div>
     </section>
-
-
 
     <!-- Contact Section -->
     <section class="page-section" id="contact">
@@ -236,6 +170,9 @@
 
     <!-- Custom scripts for this template -->
     <script src="js/creative.min.js"></script>
+
+    <!-- LinkedIn Profile Badge -->
+    <script src="https://platform.linkedin.com/badges/js/profile.js" async defer type="text/javascript"></script>
 
 </body>
 
